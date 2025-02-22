@@ -1,6 +1,7 @@
 package application;
 
 import db.DB;
+import db.DbIntegrityException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,18 +15,16 @@ public class Program {
         try {
             conn = DB.getConnection();
             st = conn.prepareStatement(
-                    "UPDATE seller " // UPDATE TEM Q TER WHERE
-                    + "SET BaseSalary = BaseSalary + ? "
+                    "DELETE FROM department " // DELETE TEM Q TER WHERE
                     + "WHERE "
-                    + "(DepartmentId = ?)");
-
-            st.setDouble(1, 200);
-            st.setInt(2, 2);
+                    +"Id = ?"
+            );
+            st.setInt(1, 2);
 
             int rowsAffected = st.executeUpdate();
             System.out.println("Done! Rows affected: " + rowsAffected);
         }catch (SQLException e){
-            e.printStackTrace();
+            throw new DbIntegrityException(e.getMessage());
 
         }finally {
             DB.closeStatement(st);
